@@ -17,7 +17,7 @@ namespace InterdisciplinairProject.Views
         {
             Debug.WriteLine("[DEBUG] FixtureSettingsView constructor called");
             InitializeComponent();
-            DataContext = new FixtureSettingsViewModel();
+            DataContext = new FixtureSettingsViewModel(new InterdisciplinairProject.Services.HardwareConnection());
             Debug.WriteLine("[DEBUG] FixtureSettingsView DataContext set to FixtureSettingsViewModel");
             Debug.WriteLine("[DEBUG] FixtureSettingsView initialization complete");
         }

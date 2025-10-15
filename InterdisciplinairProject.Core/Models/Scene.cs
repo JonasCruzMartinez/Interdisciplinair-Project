@@ -1,27 +1,23 @@
+using System.Text.Json.Serialization;
+
+#pragma warning disable SA1600
+
 namespace InterdisciplinairProject.Core.Models;
 
-/// <summary>
-/// Represents a DMX scene.
-/// </summary>
 public class Scene
 {
-    /// <summary>
-    /// Gets or sets the unique identifier of the scene.
-    /// </summary>
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [JsonPropertyName("id")]
+    public string? Id { get; set; }
 
-    /// <summary>
-    /// Gets or sets the name of the scene.
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
 
-    /// <summary>
-    /// Gets or sets the creation date of the scene.
-    /// </summary>
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    [JsonPropertyName("dimmer")]
+    public int Dimmer { get; set; }
 
-    /// <summary>
-    /// Gets or sets the list of scene fixtures in this scene.
-    /// </summary>
-    public List<SceneFixture> Fixtures { get; set; } = new();
+    [JsonPropertyName("fixtures")]
+    public List<Fixture>? Fixtures { get; set; }
+
+    [JsonIgnore]
+    public string DisplayText => $"{Name} (ID: {Id}) - Dimmer: {Dimmer}%";
 }

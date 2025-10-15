@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using InterdisciplinairProject.Core.Interfaces;
 using InterdisciplinairProject.Core.Models;
@@ -21,11 +22,11 @@ public class FixtureSettingsViewModel : INotifyPropertyChanged
     /// <summary>
     /// Initializes a new instance of the <see cref="FixtureSettingsViewModel"/> class.
     /// </summary>
-    public FixtureSettingsViewModel()
+    public FixtureSettingsViewModel(IHardwareConnection hardwareConnection)
     {
         Debug.WriteLine("[DEBUG] FixtureSettingsViewModel constructor called");
-        _hardwareConnection = new HardwareConnection();
-        Debug.WriteLine("[DEBUG] HardwareConnection created");
+        _hardwareConnection = hardwareConnection;
+        Debug.WriteLine("[DEBUG] HardwareConnection assigned");
 
         // Try to load from scenes.json in project root or AppData
         var scenesFilePath = FindScenesFile();
@@ -41,6 +42,11 @@ public class FixtureSettingsViewModel : INotifyPropertyChanged
         Debug.WriteLine($"[DEBUG] FixtureSettingsViewModel initialization complete. Channels collection has {Channels.Count} items");
 
         SaveChannelValueCommand = new RelayCommand(SaveAllChannels);
+    }
+
+    private void SaveAllChannels()
+    {
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -140,7 +146,7 @@ public class FixtureSettingsViewModel : INotifyPropertyChanged
         foreach (var channelVm in Channels)
         {
             await _hardwareConnection.SetChannelValueAsync(
-                _currentFixture.FixtureId,
+                _currentFixture.Id,
                 channelVm.Name,
                 channelVm.Value);
         }

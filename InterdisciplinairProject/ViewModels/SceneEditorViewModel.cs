@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using InterdisciplinairProject.Core.Interfaces;
@@ -39,7 +38,7 @@ public partial class SceneEditorViewModel : ObservableObject
         _sceneRepository = sceneRepository;
         _fixtureRepository = fixtureRepository;
         _hardwareConnection = hardwareConnection;
-        _fixtureSettingsViewModel = new FixtureSettingsViewModel(hardwareConnection);
+        _fixtureSettingsViewModel = new FixtureSettingsViewModel(_hardwareConnection);
     }
 
     /// <summary>
@@ -48,41 +47,18 @@ public partial class SceneEditorViewModel : ObservableObject
     /// <param name="scene">The scene to load.</param>
     public void LoadScene(Scene scene)
     {
+        if (scene == null)
+        {
+            return;
+        }
+
         Scene = scene;
         SceneFixtures.Clear();
+        var currentChannel = 1;
         foreach (var fixture in scene.Fixtures)
         {
-            SceneFixtures.Add(fixture);
-        }
-    }
-
-    /// <summary>
-    /// Adds a fixture to the scene.
-    /// </summary>
-    [RelayCommand]
-    private async Task AddFixture()
-    {
-        var fixtures = await _fixtureRepository.GetAllFixturesAsync();
-
-        // For simplicity, add the first fixture. In real app, show dialog.
-        if (fixtures.Any())
-        {
-            var fixture = fixtures.First();
-            var sceneFixture = new SceneFixture
-            {
-                Fixture = fixture,
-                Universe = 1,
-                StartChannel = GetNextAvailableChannel(),
-            };
-
-            // Initialize channel values to defaults
-            foreach (var channel in fixture.Channels)
-            {
-                sceneFixture.ChannelValues[channel.Name] = channel.Default;
-            }
-
-            Scene.Fixtures.Add(sceneFixture);
-            SceneFixtures.Add(sceneFixture);
+            SceneFixtures.Add(new SceneFixture { Fixture = fixture, StartChannel = currentChannel });
+            currentChannel += fixture.Channels.Count;
         }
     }
 
@@ -99,7 +75,7 @@ public partial class SceneEditorViewModel : ObservableObject
     {
         if (value != null)
         {
-            FixtureSettingsViewModel.LoadFixture(value);
+            FixtureSettingsViewModel.LoadFixture(value.Fixture);
         }
     }
 

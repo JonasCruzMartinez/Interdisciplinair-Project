@@ -41,7 +41,7 @@ public class SceneRepository : ISceneRepository
     /// </summary>
     /// <param name="id">The scene ID.</param>
     /// <returns>The scene or null.</returns>
-    public async Task<Scene?> GetSceneByIdAsync(Guid id)
+    public async Task<Scene?> GetSceneByIdAsync(string id)
     {
         return await Task.FromResult(_scenes.FirstOrDefault(s => s.Id == id));
     }
@@ -58,6 +58,7 @@ public class SceneRepository : ISceneRepository
         {
             _scenes.Remove(existing);
         }
+
         _scenes.Add(scene);
         await SaveToFileAsync();
     }
@@ -67,7 +68,7 @@ public class SceneRepository : ISceneRepository
     /// </summary>
     /// <param name="id">The scene ID.</param>
     /// <returns>A task.</returns>
-    public async Task DeleteSceneAsync(Guid id)
+    public async Task DeleteSceneAsync(string id)
     {
         var scene = _scenes.FirstOrDefault(s => s.Id == id);
         if (scene != null)
