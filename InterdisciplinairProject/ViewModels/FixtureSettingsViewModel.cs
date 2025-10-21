@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
+using CommunityToolkit.Mvvm.Input;
 using InterdisciplinairProject.Core.Interfaces;
 using InterdisciplinairProject.Core.Models;
 using InterdisciplinairProject.Services;
@@ -38,6 +39,8 @@ public class FixtureSettingsViewModel : INotifyPropertyChanged
         Channels = new ObservableCollection<ChannelViewModel>();
         LoadChannelsFromFixture(_currentFixture);
         Debug.WriteLine($"[DEBUG] FixtureSettingsViewModel initialization complete. Channels collection has {Channels.Count} items");
+
+        SaveChannelValueCommand = new RelayCommand(SaveAllChannels);
     }
 
     /// <summary>
@@ -129,6 +132,17 @@ public class FixtureSettingsViewModel : INotifyPropertyChanged
         else
         {
             Debug.WriteLine($"[DEBUG] ChannelViewModel_PropertyChanged ignored - not a Value change or invalid sender");
+        }
+    }
+
+    private async void SaveAllChannels(object? parameter)
+    {
+        foreach (var channelVm in Channels)
+        {
+            await _hardwareConnection.SetChannelValueAsync(
+                _currentFixture.FixtureId,
+                channelVm.Name,
+                channelVm.Value);
         }
     }
 
@@ -328,4 +342,6 @@ public class FixtureSettingsViewModel : INotifyPropertyChanged
 
         return defaultFixture;
     }
+
+    public ICommand SaveChannelValueCommand { get; }
 }
